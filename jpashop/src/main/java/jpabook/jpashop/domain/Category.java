@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Getter @Setter
 public class Category {
@@ -36,7 +38,7 @@ public class Category {
      * 실무에서 사용하기에는 한계가 있다 => 중간 엔티티를 만들고 @ManyToOne, @OneToMany로 매핑해서 사용하자!
      */
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
@@ -46,4 +48,10 @@ public class Category {
     /**
      * 셀프로 양방향 연관관계를 검
      */
+
+    // ==연관관계 편의 메서드==
+    public void addChildCategory(Category child) {
+        this.child.add(child);
+        child.setParent(this);
+    }
 }
