@@ -15,7 +15,7 @@ import java.util.List;
  * JPA에 모든 데이터 변경이나 로직들은 트랜잭션 안에서 실행되어야 한다. => @Transactional
  * => public으로 된 메서드는 다 트랜잭션에 걸려 들어감
  * readOnly => JPA가 "조회"하는 곳에서는 성능을 좀 더 최적화함 (영속성 컨텍스트를 플러시 하지 않으므로)
- * 데이터베이스 드라이버가 지원하면 DB에서 성능 향상
+ *      데이터베이스 드라이버가 지원하면 DB에서 성능 향상
  */
 public class MemberService {
 
