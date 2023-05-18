@@ -116,4 +116,61 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+    //==생성 메서드==//
+
+    /**
+     * 주문이 생성이 복잡하다. Order만 생성할게 아니라, OrderItem도 생성해야 하고, Delivery도 생성해야 하고...
+     * => 복잡한 생성은 별도의 생성 메서드가 있으면 좋다!!
+     * => 이렇게 함으로써 앞으로 생성하는 시점이 바뀌게 되면 이 것만 바꾸면 된다!!
+     */
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+
+        // OrderItem도 사실 이렇게 넘어오는게 아니라 파라미터나 dto가 넘어 오면서 더 복잡하게 넘어온다.
+                // '여기서' OrderItem을 생성해서 넣을 수도 있다.
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+             order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER); // 처음 상태를 `ORDER`로 강제
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    //==비즈니스 로직==//
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+
+        // 이미 배송 완료 상태면,
+        if(delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+       }
+
+        // this는 강조할 때랑 이름이 똑같을 때 외에는 잘 안쓰는 편(취향)
+        this.setStatus(OrderStatus.CANCEL);
+
+        // 재고를 원복
+        for (OrderItem orderItem : orderItems) {
+            // 주문 상품에 주문 취소를 알림
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==//
+    /**
+     * 전체 주문 가격 조회
+     *      -- 실무에서는 주로 주문에 전체 주문 가격 필드를 두고 역정규화 한다! --
+     */
+    public int getTotalPrice() {
+
+        // 전체 주문 가격
+        return orderItems.stream()
+                .mapToInt(OrderItem::getTotalPrice)
+                .sum();
+    }
+
 }
