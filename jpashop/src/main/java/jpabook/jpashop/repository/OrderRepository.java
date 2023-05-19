@@ -88,6 +88,8 @@ public class OrderRepository {
     /**
      * JPA Criteria (JPQL을 자바코드로 작성하게 해주는 표준으로 제공하는 것)
      * - 실무에서 안씀!
+     * - 무슨 쿼리가 생성될지 머리에 안떠오름, 유지보수 힘듬
+     * => Querydsl
      */
     public List<Order> findAllByCriteria(OrderSearch orderSearch) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
