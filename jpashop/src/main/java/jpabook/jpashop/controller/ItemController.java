@@ -71,17 +71,24 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") BookForm form) {
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form) {
 
-        Book book = new Book();
-        book.setId(form.getId());
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+//        Book book = new Book();
+//        book.setId(form.getId());
+//        book.setName(form.getName());
+//        book.setPrice(form.getPrice());
+//        book.setStockQuantity(form.getStockQuantity());
+//        book.setAuthor(form.getAuthor());
+//        book.setIsbn(form.getIsbn());
 
-        itemService.saveItem(book);
+//        itemService.saveItem(book);
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        /**
+         * 어설프게 엔티티를 파라미터로 안썼다!
+         * 정확하게 내가 필요한 데이터만 딱딱 받았다! -> 유지보수성 높아짐
+         * 업데이트 할 때 데이터가 많다 -> 서비스 계층에 dto 만들어서 쓰자
+         */
+
         return "redirect:/items";
         /**
          * 누군가가 임의적으로 id를 조작해서 넘길 수 있다. -> 다른 사람의 데이터가 수정된다
