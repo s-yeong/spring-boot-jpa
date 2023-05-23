@@ -8,12 +8,56 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
 
     private final MemberService memberService;
+
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        return memberService.findMembers();
+        /**
+         * 응답값으로 엔티티를 직접 외부에 노출함
+         * 만약에, 회원에 대한 정보만 달라고 했는데, 실제 회원이 주문한게 있으면 orders 정보가 포함되어 있을 것이다.
+         * => 이렇게 엔티티를 직접적으로 노출하게 되면 엔티티에 있는 정보들이 다 외부에 노출된다.
+         * => @JsonIgnore를 사용하면 orders 정보가 빠진다. => 이렇게 해도 클라이언트에서 다양한 API 스타일을 요구하기 떄문에
+         * 그 때마다 case가 다 다양하기 때문에 답이 없다. (+ 응답 스펙을 맞추기 위해 로직이 추가됨)
+         *
+         * 컬렉션을 직접 반환하면 API 스펙을 변경하기 어렵다 => 별도의 `Result 클래스` 생성으로 해결
+         */
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto((m.getName())))
+                .collect(Collectors.toList());
+
+        return new Result(collect);
+        /**
+         * 엔티티를 DTO로 변환해서 반환
+         * Result 클래스로 컬렉션을 감싸서 향후 필요한 필드를 추가할 수 있다.
+         */
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+        // 노출할 것만 API 스펙에 노출함
+    }
 
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
