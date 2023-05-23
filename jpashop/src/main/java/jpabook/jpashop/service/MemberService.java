@@ -63,5 +63,24 @@ public class MemberService {
 
         return memberRepository.findOne(memberId);
     }
+
+    @Transactional
+    public void update(Long id, String name) {
+
+        Member member = memberRepository.findOne(id);
+        member.setName(name);   // 변경감지에 의해 변경
+        /**
+         * 1. db에서 영속성 컨텍스트에 올린 member 반환
+         * 2. 영속 상태의 member를 바꿔주면
+         * 3. 종료되면 Spring AOP가 동작하면서, @Transactional에 의해서 끝나는 시점에 커밋이 된다.
+         * 4. JPA가 Flush 하고 영속성 컨텍스트 커밋 다 해버린다.
+         *
+         * void가 아닌 Member를 그대로 반환해도 되는데, 그러면 영속상태가 끊긴 Member가 반환이 된다.
+         * - 이렇게 하면 업데이트를 하면서 Member를 쿼리해버리는 꼴이 된다.
+         * (업데이트는 변경성 메서드인데, Member를 반환하면 id로 조회하는 꼴이 된다 => 커맨드와 쿼리가 같이 있다.)
+         *
+         * => 커맨드와 쿼리를 철저히 분리하는게 좋다!!!
+         */
+    }
 }
 
