@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty
     private String name;
 
     @Embedded
@@ -30,4 +32,15 @@ public class Member {
      * Order 테이블에 있는 member 필드에 의해 매핑된것
      */
 
+
+    /**
+     * Presentation Layer를 위한 검증 로직이 `엔티티`에 있다
+     * => 어떤 API에서는 NotEmpty가 필요한데, 다른 API에서는 NotEmpty가 없을 수도 있다..
+     *
+     * 엔티티의 스펙을 username으로 바뀌게 되면 -> API 스펙 자체가 usrename으로 바뀌게 된다.
+     * => 큰 문제!! - 엔티티라는 것은 굉장히 여러 곳에서 쓰기 때문에 바뀔 확률이 높다. => 이것이 바뀐다고 API 스펙 자체가 바뀌게 된다면 문제가 된다..
+     *      => API 스펙을 위한 별도의 DTO를 만들어야 한다!!
+     *      === 엔티티를 이렇게 외부에서 json 오는 것을 바인딩 받는데 쓰면 안된다!! ===
+     *      (엔티티를 파라미터로 받지도 말고, 외부에 노출해서도 안된다!)
+     */
 }
