@@ -9,7 +9,7 @@ spring:
   # 이러한 설정은 스프링 부트 메뉴얼에 나와있음
   jpa:
     hibernate:
-      ddl-auto: none  # create : 애플리케이션 실행 시점에 테이블 생성 (테이블 drop 하고, 다시 생성) -> none : 한 번 데이터 넣어두면 그 데이터 계속 쓸 수 있음
+      ddl-auto: create  # create : 애플리케이션 실행 시점에 테이블 생성 (테이블 drop 하고, 다시 생성) -> none : 한 번 데이터 넣어두면 그 데이터 계속 쓸 수 있음
     properties:
       hibernate:
 #        show_sql: true # System.out에 출력
