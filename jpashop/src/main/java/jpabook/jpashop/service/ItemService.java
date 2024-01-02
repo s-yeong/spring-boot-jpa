@@ -2,6 +2,7 @@ package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
+import jpabook.jpashop.dto.UpdateItemDto;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,21 +40,21 @@ public class ItemService {
      * 실무에서는 복잡하기 때문에 merge를 통해 깔끔하게 처리할 수 없다. -> 가급적 merge 쓰지말자!!!!
      */
     @Transactional
-    public void updateItem(Long itemId, String name, int price, int stockQuantity) {   // param : 파라미터로 넘어온 준영속 상태의 엔티티
+    public void updateItem(Long itemId, UpdateItemDto updateItemDto) {   // param : 파라미터로 넘어온 준영속 상태의 엔티티
 
         //id를 기반으로 실제 db에 있는 영속상의 엔티티를 찾아옴
         Item findItem = itemRepository.findOne(itemId); // 같은 엔티티 조회
 
         /**
-         * price,name, stockQuantity만 넘기는 메서드나 addStock()처럼 의미있는 메서드를 만들어야지
-         * set을 통해 깔면 안된다!! -> 이렇게 해야 변경 지점이 엔티티로 간다!!
+         * price,name, stockQuantity만 넘기는 메서드나 addStock()처럼 의미있는 메서드를 만들어야지 set을 통해 깔면 안된다!!
+         * -> 이렇게 해야 변경 지점이 엔티티로 간다!!
          * 조금만 복잡해도 setPrice라고 하면, 도대체 어디서 바꾸는건지 한참 뒤져야 한다!! (역추적 하기 힘듬)
          */
 //        findItem.change(price, name, stockQuantitiy)
 //        findItem.addStock()
-        findItem.setName(name);
-        findItem.setPrice(price);
-        findItem.setStockQuantity(stockQuantity);
+        findItem.setName(updateItemDto.getName());
+        findItem.setPrice(updateItemDto.getPrice());
+        findItem.setStockQuantity(updateItemDto.getStockQuantity());
 //        return findItem;
         /**
          * 이후에, itemRepository에서 save, EntityManager의 persist, merge 다 호출할 필요가 없다!

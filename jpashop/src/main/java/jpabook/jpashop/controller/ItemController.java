@@ -2,6 +2,7 @@ package jpabook.jpashop.controller;
 
 import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Item;
+import jpabook.jpashop.dto.UpdateItemDto;
 import jpabook.jpashop.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -82,7 +83,12 @@ public class ItemController {
 //        book.setIsbn(form.getIsbn());
 
 //        itemService.saveItem(book);
-        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        UpdateItemDto updateItemDto = UpdateItemDto.builder()
+            .name(form.getName())
+            .price(form.getPrice())
+            .stockQuantity(form.getStockQuantity())
+            .build();
+        itemService.updateItem(itemId, updateItemDto);
         /**
          * 어설프게 엔티티를 파라미터로 안썼다!
          * 정확하게 내가 필요한 데이터만 딱딱 받았다! -> 유지보수성 높아짐
