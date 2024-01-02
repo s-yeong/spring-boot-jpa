@@ -38,6 +38,9 @@ public class Category {
      * 실무에서 사용하기에는 한계가 있다 => 중간 엔티티를 만들고 @ManyToOne, @OneToMany로 매핑해서 사용하자!
      */
 
+
+
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
@@ -46,6 +49,7 @@ public class Category {
     private List<Category> child = new ArrayList<>();
 
     /**
+     * 부모, 자식 관계
      * 셀프로 양방향 연관관계를 검
      */
 

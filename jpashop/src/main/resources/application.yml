@@ -15,6 +15,7 @@ spring:
 #        show_sql: true # System.out에 출력
         format_sql: true
 
+# 모든 로그 출력은 가급적 로그를 통해 남겨야 한다.
 logging:
   level:
     org.hibernate.SQL: debug # Loger를 통해 출력

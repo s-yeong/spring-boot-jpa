@@ -24,7 +24,7 @@ public class ItemUpdateTest {
         book.setName("azazz");
 
         //TX commit => JPA가 변경 부분에 대해서 찾아서 update 쿼리를 자동으로 생성해서 데이터베이스에 반영함
-        //dirty checking == 변경감지
+        //=> dirty checking (변경 감지)
         //=> 이 메커니즘으로 기본적으로 JPA의 엔티티를 바꿀 수 있다.
         /**
          * Order의 cancel()을 호출해서 OrderStatus를 CANCEL로 바꾸고 DB에 업데이트 따로 날려주는 명령어가 없었음

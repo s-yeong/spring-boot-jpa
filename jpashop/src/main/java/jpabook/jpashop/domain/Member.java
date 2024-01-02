@@ -29,9 +29,10 @@ public class Member {
     private List<Order> orders = new ArrayList<>(); // 컬렉션은 필드에서 바로 초기화 하는 것이 가장 좋다.
 
     /**
-     * 나는 주인이 아니라 연관관계 거울이다 => 읽기 전용
+     * - mappedBy (Order 테이블에 있는 member 필드에 의해 매핑된것)
+     * 나는 주인이 아니라 연관관계 거울이다 => 읽기 전용 (매핑 되는 '거울'일 뿐이다)
      * => 값을 넣는다고 해서 FK값이 변경되지 않는다.
-     * Order 테이블에 있는 member 필드에 의해 매핑된것
+     *      <-> Order는 변경하면 FK값이 변경이 된다.
      */
 
 }
