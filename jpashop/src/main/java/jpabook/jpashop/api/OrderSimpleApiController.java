@@ -1,9 +1,16 @@
 package jpabook.jpashop.api;
 
+import static java.util.stream.Collectors.toList;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,6 +57,55 @@ public class OrderSimpleApiController {
             order.getDelivery().getAddress();
         }
         return all;
+    }
+
+    /**
+     * 2. 엔티티를 조회해서 DTO로 변환 (feth join 사용X)
+     * - 단점 : 지연로딩으로 쿼리 N번 호출
+     * - 엔티티가 바뀌어도 API 스펙이 바뀌지 않는다.
+     * - 3개의 테이블을 조회해야 하는 상황
+     * - 두 개의 주문서가 있다고 했을 때, 첫번째 주문서는 쿼리 3번으로 완성되고(주문, 멤버, 딜리버리), 두번째 주문서는 쿼리 2번으로 완성된다. (멤버, 딜리버리)
+     *      - ORDER - SQL 1번 실행 -> 결과 주문 수2개
+     */
+    @GetMapping("/api/v2/simpmle-orders")
+    public List<SimpleOrderDto> orderV2() {
+
+        // [ORDER 2개]
+        // 이 것이 'N+1' 문제다. (1+N 문제라고 해야할 것 같은 느낌)
+        // 1 + 회원 N + 배송 N (1+2+2)
+         // 1. 처음에 'N개'의 orders를 가져오기 위해 쿼리를 날림
+        List<Order> orders = orderRepository.findAllByString(new OrderSearch());
+        
+        // [2번 돈다.]
+        // 2. 첫번째 쿼리의 결과로 'N번' 만큼 추가 쿼리가 실행된다.
+        List<SimpleOrderDto> result = orders.stream()
+            .map(o -> new SimpleOrderDto(o))
+            .collect(toList());
+        return result;
+
+//        return orderRepository.findAllByString(new OrderSearch()).stream()
+//            .map(SimpleOrderDto::new)
+//            .collect(toList());
+    }
+
+    @Data
+    static class SimpleOrderDto {
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address; // Address는 엔티티가 아닌 Value Object다. 단순 Address라는 타입을 정했다고 생각하면 된다.
+
+        // DTO가 이렇게 entity를 parameter로 받는 것은 크게 문제가 되지 않는다.
+        // 별로 중요하지 않는데서 중요한 entity에 의존하는 것이기 때문
+        public SimpleOrderDto(Order order) {
+            this.orderId = order.getId();
+            this.name = order.getMember().getName();    // LAZY 초기화
+            // => 영속성 컨텍스트가 memberId를 가지고 영속성 컨텍스트에 찾아보고 없으면 DB 쿼리를 날린다.
+            this.orderDate = order.getOrderDate();
+            this.orderStatus = order.getStatus();
+            this.address =  order.getDelivery().getAddress();   // LAZY 초기화
+        }
     }
 
 
