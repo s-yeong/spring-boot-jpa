@@ -116,4 +116,16 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery() {
+
+        // member랑 delivery를 SQL 입장에서 조인이면서 셀렉트 절에서 같이 다 한 번에 가져와 버린다.
+        // => '한방 쿼리'로 오더랑 멤버랑 딜리버리를 조인한 다음에 아예 셀렉트 절에 다 넣고 한번에 다 땡겨온다.
+        // => 'LAZY' 다 무시하고 그냥 다 값을 채워서 프록시도 아니고 그냥 '진짜 객체 값'을 다 채워서 가져온다.
+        // => 이 것을 'fetch join' 이라고 한다.
+        return em.createQuery(
+            "select o from Order o" +
+                " join fetch o.member m" +
+                " join fetch o.delivery d", Order.class
+        ).getResultList();
+    }
 }

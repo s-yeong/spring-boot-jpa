@@ -88,6 +88,24 @@ public class OrderSimpleApiController {
 //            .collect(toList());
     }
 
+    /**
+     * 3. 엔티티를 조회해서 DTO로 변환 (feth join 사용O)
+     * - fetch join으로 쿼리 '1번' 호출
+     * - fetch join에 대한 자세한 내용은 JPA 기본편 참고
+     * - 페치 조인으로 order -> member, order -> delivery 는 이미 조회된 상태이기 때문에 지연 로딩 X
+     */
+    @GetMapping("/api/v3/simpmle-orders")
+    public List<SimpleOrderDto> orderV3() {
+
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> result = orders.stream()
+            .map(SimpleOrderDto::new)
+            .collect(toList());
+
+        return result;
+    }
+
+
     @Data
     static class SimpleOrderDto {
         private Long orderId;
