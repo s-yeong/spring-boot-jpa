@@ -29,7 +29,7 @@ public class OrderRepository {
      * 동적 쿼리
      * => Querydsl
      */
-    public List<Order> findAll(OrderSearch orderSearch) {
+    public List<Order> findAllByString(OrderSearch orderSearch) {
 
         /**
          * JPQL
