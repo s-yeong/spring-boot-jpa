@@ -4,12 +4,13 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     /**
      * 1. 엔티티를 직접 노출
@@ -103,6 +105,17 @@ public class OrderSimpleApiController {
             .collect(toList());
 
         return result;
+    }
+
+    /**
+     * 4. JPA에서 DTO로 바로 조회
+     * - 쿼리 1번 호출
+     * - select 절에서 원하는 데이터만 선택해서 조회
+     * - V3와 V4는 트레이드 오프가 있다.
+     */
+    @GetMapping("/api/v4/simpmle-orders")
+    public List<OrderSimpleQueryDto> orderV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 
 
